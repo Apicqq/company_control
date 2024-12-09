@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "businesscontrol"
+version = "0.1.0"
+description = ""
+authors = ["Nikita Smykov <132088678+Apicqq@users.noreply.github.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.13"
+fastapi = "^0.115.6"
+pydantic-settings = "^2.6.1"
+sqlalchemy = "^2.0.36"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
