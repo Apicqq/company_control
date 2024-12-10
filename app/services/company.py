@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from fastapi.exceptions import HTTPException
 
+from app.schemas.company import CompanyOut
 from app.services.base import BaseService
 from app.units_of_work.base import atomic
 
@@ -64,7 +65,7 @@ class CompanyService(BaseService):
             company_id=company.id,
             **kwargs
         )
-        return True
+        return CompanyOut.model_validate(company)
 
     @atomic
     async def check_account(self, account: str):

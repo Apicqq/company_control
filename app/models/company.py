@@ -10,7 +10,7 @@ if TYPE_CHECKING:
 
 
 class Company(Base):
-    name: Mapped[str] = mapped_column(String, unique=True)
+    company_name: Mapped[str] = mapped_column(String, unique=True)
     users: Mapped[list["User"]] = relationship(
         "User", back_populates="company"
     )
