@@ -40,7 +40,7 @@ class CompanyRepository(SqlAlchemyRepository):
         )
         return await self.session.scalar(query)
 
-    async def generate_invite_code(self, email: str) -> type[Base]:
+    async def generate_invite_code(self, email: str) -> type[Model]:
         """
         Generate invitation code for given email.
         :param email: email of the company.
@@ -65,3 +65,11 @@ class CompanyRepository(SqlAlchemyRepository):
             .where(InviteChallenge.invite_token == invite_token)
         )
         return await self.session.scalar(query)
+
+    async def create_company(self, **kwargs) -> Model:
+        """
+        Create a company and return it.
+        :param kwargs:
+        :return:
+        """
+        return await self.add_one_and_get_obj(**kwargs)

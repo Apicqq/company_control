@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException
 
 from app.schemas.user import ValidateEmail
 from app.schemas.auth import InviteChallenge
+from app.schemas.company import CreateCompany, CompanyOut
 from app.services.base import BaseService
 from app.services.company import CompanyService
 
@@ -41,6 +42,12 @@ async def sign_up(
     )
 
 
-@router.post("/sign-up-complete")
-async def complete_sign_up():
-    return {"status": "OK"}
+@router.post(
+    "/sign-up-complete",
+    response_model=CreateCompany,
+)
+async def complete_sign_up(
+        body: CreateCompany,
+        service: CompanyService = Depends(CompanyService),
+) -> CreateCompany:
+    return await service.create_company(**body.model_dump())

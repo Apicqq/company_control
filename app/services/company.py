@@ -52,3 +52,12 @@ class CompanyService(BaseService):
         :return:
         """
         return await self.uow.companies.verify_invite(account, invite_token)
+
+    @atomic
+    async def create_company(self, **kwargs):
+        """
+        Create new company.
+        :param kwargs:
+        :return:
+        """
+        return await self.uow.companies.create_company(**kwargs)
