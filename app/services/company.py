@@ -25,3 +25,15 @@ class CompanyService(BaseService):
         """
         return await self.uow.companies.get_company_by_email(email)
 
+    @atomic
+    async def generate_invite_token(self, email: str) -> None:
+        """
+        Generate invite token for company with given email.
+        :param email:
+        :return:
+        """
+        return await self.uow.companies.generate_invite_code(email)
+
+    @atomic
+    async def check_token_exists(self, email: str) -> bool:
+        return await self.uow.companies.check_token_exists(email)

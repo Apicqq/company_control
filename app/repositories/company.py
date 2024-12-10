@@ -1,13 +1,17 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, TypeVar
 
-from sqlalchemy import select, exists
+from sqlalchemy import select, exists, insert
 
 from app.repositories.base import SqlAlchemyRepository
+from app.models.base import Base
 from app.models.user import User
+from app.models.auth import InviteChallenge
+from app.utils.auth import generate_invite_code
 
 if TYPE_CHECKING:
-    from sqlalchemy import Select
+    from sqlalchemy import Select, Insert, Result
 
+Model = TypeVar("Model", bound=Base)
 
 class CompanyRepository(SqlAlchemyRepository):
     """
@@ -24,3 +28,27 @@ class CompanyRepository(SqlAlchemyRepository):
         """
         query: Select = select(exists().where(User.email == email))
         return await self.session.scalar(query)
+
+    async def check_token_exists(self, email: str) -> bool:
+        """
+        Check if token exists for given email.
+        :return:
+        """
+        query: Select = select(
+            exists().where(InviteChallenge.account == email)
+        )
+        return await self.session.scalar(query)
+
+    async def generate_invite_code(self, email: str) -> type[Base]:
+        """
+        Generate invitation code for given email.
+        :param email: email of the company.
+        :return:
+        """
+        query: Insert = insert(InviteChallenge).values(
+            account=email,
+            invite_token=generate_invite_code(),
+        ).returning(InviteChallenge)
+        obj: Result = await self.session.execute(query)
+        return obj.scalar_one()
+

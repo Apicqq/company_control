@@ -1,6 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.schemas.user import ValidateEmail
+from app.schemas.auth import InviteChallenge
 from app.services.base import BaseService
 from app.services.company import CompanyService
 
@@ -10,17 +11,21 @@ router = APIRouter(
 
 
 @router.get(
-    "/check_account{account}",
-    response_model=dict[str, str],
+    "/check_account/{account}",
+    response_model=InviteChallenge,
 )
 async def check_account(
         account: str,
         service: CompanyService = Depends(CompanyService)
-) -> dict[str, str]:
+) -> InviteChallenge:
     if await service.get_company_by_email(account):
         raise HTTPException(status_code=400, detail="Email already taken")
-    return {"OK": "True"}
-
+    if await service.check_token_exists(account):
+        raise HTTPException(
+            status_code=400,
+            detail="Invite token for that email already exists"
+        )
+    return await service.generate_invite_token(account)
 
 
 @router.post("/sign-up")

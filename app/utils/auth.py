@@ -1,4 +1,5 @@
 import datetime
+from secrets import token_hex
 
 import bcrypt
 import jwt
@@ -35,3 +36,7 @@ def hash_password(password: str) -> bytes:
 
 def verify_password(password: str, hashed_password: bytes) -> bool:
     return bcrypt.checkpw(password.encode("utf-8"), hashed_password)
+
+
+def generate_invite_code(n_bytes: int = 25):
+    return token_hex(n_bytes)

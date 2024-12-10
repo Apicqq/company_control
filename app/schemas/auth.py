@@ -1,7 +1,6 @@
 from pydantic import BaseModel
-from app.schemas.user import ValidateEmail
 
 
 class InviteChallenge(BaseModel):
-    account: ValidateEmail
+    account: str
     invite_token: str

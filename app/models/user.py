@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import TYPE_CHECKING
 
-from sqlalchemy import String
+from sqlalchemy import Integer, String, ForeignKey
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.models.base import Base
@@ -22,3 +22,4 @@ class User(Base):
     password: Mapped[str] = mapped_column(String)
     role: Mapped["Role"] = mapped_column(String, default=Role.ADMIN)
     company: Mapped["Company"] = relationship("Company",back_populates="users")
+    company_id: Mapped[int] = mapped_column(Integer, ForeignKey("company.id"))
