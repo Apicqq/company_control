@@ -3,7 +3,10 @@ from typing import Any, Awaitable, Callable, Optional, Protocol
 from types import TracebackType
 
 from app.database.db import AsyncSessionLocal
-from app.repositories.user import UserRepository
+from app.models.user import User
+from app.models.company import Company
+from app.repositories.user import  UserRepository
+from app.repositories.company import CompanyRepository
 
 
 def atomic(
@@ -70,7 +73,8 @@ class UnitOfWork:
         and also injecting model-specific repository.
         """
         self.session = self.session_factory()
-        self.users = UserRepository(self.session,) #FIXME add model
+        self.users = UserRepository(self.session, User) #FIXME add model
+        self.companies = CompanyRepository(self.session, Company)
 
     async def __aexit__(
         self,

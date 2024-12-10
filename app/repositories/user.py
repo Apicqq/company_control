@@ -1,10 +1,10 @@
 from datetime import date
 from typing import Any, Sequence, TYPE_CHECKING
 
-from sqlalchemy import select, distinct, between
-
+from sqlalchemy import select, distinct, between, exists
 
 from app.repositories.base import SqlAlchemyRepository
+from app.models.user import User
 
 if TYPE_CHECKING:
     from sqlalchemy import Result, Select
@@ -17,3 +17,6 @@ class UserRepository(SqlAlchemyRepository):
     It uses SQLAlchemy as engine, and includes all base CRUD methods,
     as well as specific ones listed below.
     """
+
+
+
