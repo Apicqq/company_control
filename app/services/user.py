@@ -15,6 +15,3 @@ class UserService(BaseService):
     """
 
     base_repository: str = "users"
-
-
-

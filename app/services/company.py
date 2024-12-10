@@ -1,4 +1,3 @@
-from typing import Any, Optional
 from http import HTTPStatus
 
 from fastapi.exceptions import HTTPException
@@ -60,4 +59,40 @@ class CompanyService(BaseService):
         :param kwargs:
         :return:
         """
-        return await self.uow.companies.create_company(**kwargs)
+        company =  await self.uow.companies.create_company(**kwargs)
+        await self.uow.users.create_user(
+            company_id=company.id,
+            **kwargs
+        )
+        return True
+
+    @atomic
+    async def check_account(self, account: str):
+        """
+        Check if company with given email already exists.
+
+        if not, but token has already been created, but not used yet,
+        raise HTTPException.
+        :param account:
+        :return:
+        """
+        if await self.get_company_by_email(account):
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail="Email already taken"
+            )
+        if await self.check_token_exists(account):
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail="Invite token for that email already exists"
+            )
+        return await self.generate_invite_token(account)
+
+    @atomic
+    async def sign_up(self, body: dict[str, str]):
+        if await self.verify_invite(**body):
+            return {"status": "OK"}
+        raise HTTPException(
+            status_code=400,
+            detail="Either token or email is invalid"
+        )

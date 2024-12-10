@@ -73,7 +73,7 @@ class UnitOfWork:
         and also injecting model-specific repository.
         """
         self.session = self.session_factory()
-        self.users = UserRepository(self.session, User) #FIXME add model
+        self.users = UserRepository(self.session, User)
         self.companies = CompanyRepository(self.session, Company)
 
     async def __aexit__(

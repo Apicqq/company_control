@@ -6,9 +6,17 @@ class ValidateEmail(BaseModel):
 
 
 
-class UserSchema(BaseModel):
+class UserOut(BaseModel):
     model_config = ConfigDict(strict=True)
-    username: str
-    password: bytes
-    email: EmailStr | None = None
-    active: bool = True
+    id: int
+    first_name: str
+    last_name: str
+    password: str
+    account: EmailStr | None = None
+    role: str
+    is_active: bool = True
+
+
+class UserLogin(BaseModel):
+    account: EmailStr
+    password: str

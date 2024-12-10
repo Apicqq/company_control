@@ -72,4 +72,7 @@ class CompanyRepository(SqlAlchemyRepository):
         :param kwargs:
         :return:
         """
-        return await self.add_one_and_get_obj(**kwargs)
+        company_data = dict(
+            name=kwargs.get("company_name"),
+        )
+        return await self.add_one_and_get_obj(**company_data)

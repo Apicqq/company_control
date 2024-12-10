@@ -1,7 +1,9 @@
 from typing import Annotated
 
 from annotated_types import MinLen, MaxLen
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, ConfigDict
+
+from app.schemas.user import UserOut
 
 class CreateCompany(BaseModel):
     account: EmailStr
@@ -11,12 +13,8 @@ class CreateCompany(BaseModel):
     company_name: str
 
 class CompanyOut(BaseModel):
+    model_config = ConfigDict(from_attributes=True)
     id: int
-    account: EmailStr
+    account: str
     company_name: str
-    first_name: str
-    last_name: str
-
-class CreateUser(BaseModel):
-    username: Annotated[str, MinLen(3), MaxLen(20)]
-    email: EmailStr
+    user: UserOut
