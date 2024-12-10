@@ -6,6 +6,7 @@ from sqlalchemy import select, distinct, between, exists
 from app.repositories.base import SqlAlchemyRepository
 from app.models.base import Base
 from app.models.user import User
+from app.utils.auth import hash_password
 
 if TYPE_CHECKING:
     from sqlalchemy import Result, Select
@@ -30,7 +31,7 @@ class UserRepository(SqlAlchemyRepository):
             first_name=kwargs.get("first_name"),
             last_name=kwargs.get("last_name"),
             account=kwargs.get("account"),
-            password=kwargs.get("password"),
+            password=hash_password(kwargs.get("password")).decode("utf-8"),
             company_id=kwargs.get("company_id"),
         )
         return await self.add_one_and_get_obj(**user_data)
