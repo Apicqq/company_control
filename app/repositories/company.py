@@ -13,6 +13,7 @@ if TYPE_CHECKING:
 
 Model = TypeVar("Model", bound=Base)
 
+
 class CompanyRepository(SqlAlchemyRepository):
     """
     Repository class for Company model.
@@ -52,3 +53,15 @@ class CompanyRepository(SqlAlchemyRepository):
         obj: Result = await self.session.execute(query)
         return obj.scalar_one()
 
+    async def verify_invite(self, email: str, invite_token: str) -> None:
+        """
+        Verify given data, proceed if valid.
+        :param email:
+        :param invite_token:
+        :return:
+        """
+        query: Select = select(
+            exists().where(InviteChallenge.account == email)
+            .where(InviteChallenge.invite_token == invite_token)
+        )
+        return await self.session.scalar(query)

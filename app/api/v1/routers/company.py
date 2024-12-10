@@ -28,13 +28,17 @@ async def check_account(
     return await service.generate_invite_token(account)
 
 
-@router.post("/sign-up")
+@router.post("/sign-up", response_model=dict[str, str])
 async def sign_up(
-        account: ValidateEmail,
-        invite_token: str,
+        body: InviteChallenge,
         service: CompanyService = Depends(CompanyService),
 ):
-    return {"status": "OK"}
+    if await service.verify_invite(**body.model_dump()):
+        return {"status": "OK"}
+    raise HTTPException(
+        status_code=400,
+        detail="Either token or email is invalid"
+    )
 
 
 @router.post("/sign-up-complete")
