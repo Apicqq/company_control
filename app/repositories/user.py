@@ -21,7 +21,7 @@ class UserRepository(SqlAlchemyRepository):
     as well as specific ones listed below.
     """
 
-    async def create_user(self, **kwargs) -> Model:
+    async def create_user(self, **kwargs: Any) -> Model:
         """
         Create a user and return it.
 
