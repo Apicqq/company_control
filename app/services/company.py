@@ -59,17 +59,14 @@ class CompanyService(BaseService):
 
     @atomic
     async def create_company(self, **kwargs) -> CompanyOut:
-        #TODO add uniqueness validation before executing queries
+        # TODO add uniqueness validation before executing queries
         """
         Create new company.
         :param kwargs:
         :return:
         """
         company: Company = await self.uow.companies.create_company(**kwargs)
-        await self.uow.users.create_user(
-            company_id=company.id,
-            **kwargs
-        )
+        await self.uow.users.create_user(company_id=company.id, **kwargs)
         return CompanyOut.model_validate(company)
 
     @atomic
@@ -85,12 +82,12 @@ class CompanyService(BaseService):
         if await self.get_company_by_email(account):
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail="Email already taken"
+                detail="Email already taken",
             )
         if await self.check_token_exists(account):
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
-                detail="Invite token for that email already exists"
+                detail="Invite token for that email already exists",
             )
         return await self.generate_invite_token(account)
 
@@ -104,6 +101,5 @@ class CompanyService(BaseService):
         if await self.verify_invite(**body):
             return {"status": "OK"}
         raise HTTPException(
-            status_code=400,
-            detail="Either token or email is invalid"
+            status_code=400, detail="Either token or email is invalid"
         )

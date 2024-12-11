@@ -8,12 +8,10 @@ from app.core.config import settings
 
 
 def encode_jwt(
-        payload: dict,
-        private_key: str = settings.auth_jwt.private_key_path.read_text(
-            "utf-8"
-        ),
-        algorithm=settings.auth_jwt.algorithm,
-        expires_in: int = settings.auth_jwt.access_token_expires_minutes,
+    payload: dict,
+    private_key: str = settings.auth_jwt.private_key_path.read_text("utf-8"),
+    algorithm=settings.auth_jwt.algorithm,
+    expires_in: int = settings.auth_jwt.access_token_expires_minutes,
 ) -> str:
     """
     Encode incoming payload to JWT token.
@@ -31,9 +29,9 @@ def encode_jwt(
 
 
 def decode_jwt(
-        token: str | bytes,
-        public_key: str = settings.auth_jwt.public_key_path.read_text("utf-8"),
-        algorithm: str = settings.auth_jwt.algorithm,
+    token: str | bytes,
+    public_key: str = settings.auth_jwt.public_key_path.read_text("utf-8"),
+    algorithm: str = settings.auth_jwt.algorithm,
 ) -> dict:
     """
     Decode JWT token into dictionary format.

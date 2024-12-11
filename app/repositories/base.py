@@ -1,5 +1,12 @@
-from typing import Any, Sequence, TypeVar, TYPE_CHECKING, Union, Optional, \
-    Protocol
+from typing import (
+    Any,
+    Sequence,
+    TypeVar,
+    TYPE_CHECKING,
+    Union,
+    Optional,
+    Protocol,
+)
 
 from sqlalchemy import delete, insert, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -71,6 +78,7 @@ class AbstractRepository(Protocol):
     async def delete_all(self, *args: Any, **kwargs: Any) -> None:
         """Delete all objects."""
         ...
+
 
 class SqlAlchemyRepository:
     """

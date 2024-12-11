@@ -36,8 +36,7 @@ class AuthService(BaseService):
         if not (user := await self.get_by_query_one_or_none(account=account)):
             raise invalid_user_exception
         if not verify_password(
-                password,
-                bytes(user.password, encoding="utf-8")
+            password, bytes(user.password, encoding="utf-8")
         ):
             raise invalid_user_exception
         return user
@@ -69,10 +68,7 @@ class AuthService(BaseService):
         return payload
 
     @atomic
-    async def get_current_auth_user(
-            self,
-            payload: dict
-    ) -> UserOut:
+    async def get_current_auth_user(self, payload: dict) -> UserOut:
         """
         Try to get current user from token.
         :param payload: token payload.
@@ -80,10 +76,10 @@ class AuthService(BaseService):
         """
         user_account: str | None = payload.get("account")
         if not (
-                user := await self.uow.auth.get_by_query_one_or_none(
-                    # type: ignore[func-returns-value]
-                    account=user_account
-                )
+            user := await self.uow.auth.get_by_query_one_or_none(
+                # type: ignore[func-returns-value]
+                account=user_account
+            )
         ):
             raise HTTPException(
                 status_code=HTTPStatus.UNAUTHORIZED,

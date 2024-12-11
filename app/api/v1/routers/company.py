@@ -15,16 +15,15 @@ router = APIRouter(
     response_model=InviteChallenge,
 )
 async def check_account(
-        account: str,
-        service: CompanyService = Depends(CompanyService)
+    account: str, service: CompanyService = Depends(CompanyService)
 ) -> InviteChallenge:
     return await service.check_account(account)
 
 
 @router.post("/sign-up", response_model=dict[str, str])
 async def sign_up(
-        body: InviteChallenge,
-        service: CompanyService = Depends(CompanyService),
+    body: InviteChallenge,
+    service: CompanyService = Depends(CompanyService),
 ):
     return await service.sign_up(body.model_dump())
 
@@ -34,8 +33,8 @@ async def sign_up(
     response_model=CompanyOut,
 )
 async def complete_sign_up(
-        body: CreateCompany,
-        company_service: CompanyService = Depends(CompanyService),
-        user_service: UserService = Depends(UserService),
+    body: CreateCompany,
+    company_service: CompanyService = Depends(CompanyService),
+    user_service: UserService = Depends(UserService),
 ) -> CompanyOut:
     return await company_service.create_company(**body.model_dump())

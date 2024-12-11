@@ -32,7 +32,7 @@ class AuthRepository(SqlAlchemyRepository):
         jwt_payload: dict = {
             "first_name": user.first_name,
             "last_name": user.last_name,
-            "account": user.account
+            "account": user.account,
         }
         return encode_jwt(jwt_payload)
 

@@ -47,10 +47,14 @@ class CompanyRepository(SqlAlchemyRepository):
         :param email: email of the user.
         :return: object of InviteChallenge model.
         """
-        query: Insert = insert(InviteChallenge).values(
-            account=email,
-            invite_token=generate_invite_code(),
-        ).returning(InviteChallenge)
+        query: Insert = (
+            insert(InviteChallenge)
+            .values(
+                account=email,
+                invite_token=generate_invite_code(),
+            )
+            .returning(InviteChallenge)
+        )
         obj: Result = await self.session.execute(query)
         return obj.scalar_one()
 
@@ -62,7 +66,8 @@ class CompanyRepository(SqlAlchemyRepository):
         :return: True if valid, False otherwise.
         """
         query: Select = select(
-            exists().where(InviteChallenge.account == email)
+            exists()
+            .where(InviteChallenge.account == email)
             .where(InviteChallenge.invite_token == invite_token)
         )
         return await self.session.scalar(query)

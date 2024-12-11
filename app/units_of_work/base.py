@@ -6,7 +6,7 @@ from app.database.db import AsyncSessionLocal
 from app.models.user import User
 from app.models.company import Company
 from app.repositories.auth import AuthRepository
-from app.repositories.user import  UserRepository
+from app.repositories.user import UserRepository
 from app.repositories.company import CompanyRepository
 
 

@@ -14,11 +14,9 @@ router = APIRouter(
 )
 
 
-
-
 @router.get("/me")
 async def check_self_info(
-        current_user: UserIn = Depends(get_current_auth_user),
+    current_user: UserIn = Depends(get_current_auth_user),
 ) -> UserOut:
     return UserOut.model_validate(current_user)
 

@@ -20,6 +20,7 @@ router.include_router(company.router, prefix="/v1", tags=["auth | v1"])
 
 router.include_router(auth.router, prefix="/v1", tags=["auth | v1"])
 
+
 @router.get(
     path="/healthz/",
     tags=["healthz"],
