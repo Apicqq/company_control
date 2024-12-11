@@ -14,7 +14,7 @@ def encode_jwt(
         ),
         algorithm=settings.auth_jwt.algorithm,
         expires_in: int = settings.auth_jwt.access_token_expires_minutes,
-):
+) -> str:
     now = datetime.datetime.now(datetime.UTC)
     to_encode = payload.copy()
     expire = now + datetime.timedelta(minutes=expires_in)

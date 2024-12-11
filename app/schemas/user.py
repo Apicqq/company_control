@@ -1,22 +1,21 @@
-from pydantic import BaseModel, EmailStr, ConfigDict
+from pydantic import BaseModel, EmailStr, ConfigDict, Field
 
-
-class ValidateEmail(BaseModel):
-    account: EmailStr
-
+from app.models.user import Role
 
 
 class UserOut(BaseModel):
-    model_config = ConfigDict(strict=True)
-    id: int
+    model_config = ConfigDict(from_attributes=True)
     first_name: str
     last_name: str
-    password: str
-    account: EmailStr | None = None
-    role: str
-    is_active: bool = True
-
-
-class UserLogin(BaseModel):
     account: EmailStr
+    role: Role
+
+
+class UserIn(UserOut):
+    id: int
+    password: str | bytes
+
+
+class UserLoginForm(BaseModel):
+    account: EmailStr = Field(..., validation_alias="username")
     password: str

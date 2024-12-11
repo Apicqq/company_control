@@ -5,6 +5,7 @@ from types import TracebackType
 from app.database.db import AsyncSessionLocal
 from app.models.user import User
 from app.models.company import Company
+from app.repositories.auth import AuthRepository
 from app.repositories.user import  UserRepository
 from app.repositories.company import CompanyRepository
 
@@ -70,11 +71,12 @@ class UnitOfWork:
         Initialize the context manager.
 
         Initialization includes creating a session via session factory,
-        and also injecting model-specific repository.
+        and also injecting model-specific repositories.
         """
         self.session = self.session_factory()
         self.users = UserRepository(self.session, User)
         self.companies = CompanyRepository(self.session, Company)
+        self.auth = AuthRepository(self.session, User)
 
     async def __aexit__(
         self,

@@ -5,7 +5,7 @@ from starlette.status import HTTP_200_OK, HTTP_400_BAD_REQUEST
 from sqlalchemy import text
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.v1.routers import users, company
+from app.api.v1.routers import users, company, auth
 from app.database.db import get_async_session
 
 router = APIRouter()
@@ -17,6 +17,8 @@ router.include_router(
 )
 
 router.include_router(company.router, prefix="/v1", tags=["auth | v1"])
+
+router.include_router(auth.router, prefix="/v1", tags=["auth | v1"])
 
 @router.get(
     path="/healthz/",
