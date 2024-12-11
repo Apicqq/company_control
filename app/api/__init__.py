@@ -13,7 +13,7 @@ router = APIRouter()
 router.include_router(
     users.router,
     prefix="/v1",
-    tags=["auth | v1"],
+    tags=["users | v1"],
 )
 
 router.include_router(company.router, prefix="/v1", tags=["auth | v1"])
