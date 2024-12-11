@@ -5,9 +5,8 @@ from fastapi.exceptions import HTTPException
 from email_validator import validate_email, EmailNotValidError
 
 from app.models.auth import InviteChallenge
-from app.schemas.company import CompanyOut
+from app.schemas.company import CompanyOut, SignUpStatus
 from app.services.base import BaseService, atomic
-# from app.units_of_work.base import atomic
 
 if TYPE_CHECKING:
     from app.models.company import Company
@@ -21,16 +20,6 @@ class CompanyService(BaseService):
     """
 
     base_repository: str = "companies"
-
-    @atomic
-    async def check_email_exists(self, account: str) -> bool:
-        """
-        Check whether email exists in database.
-
-        :param account: email of the company.
-        :return bool: True if email exists in database, else False.
-        """
-        return await self.uow.users.check_account_exists(account)
 
     @atomic
     async def generate_invite_token(self, account: str) -> InviteChallenge:
@@ -92,7 +81,7 @@ class CompanyService(BaseService):
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail="Email is not valid",
             )
-        if await self.check_email_exists(account):
+        if await self.uow.users.check_account_exists(account):
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail="Email already taken",
@@ -105,7 +94,7 @@ class CompanyService(BaseService):
         return await self.generate_invite_token(account)
 
     @atomic
-    async def sign_up(self, body: dict[str, str]) -> dict[str, str]:
+    async def sign_up(self, body: dict[str, str]) -> SignUpStatus:
         """
         Sign up company with given email and invite token.
 
@@ -113,7 +102,7 @@ class CompanyService(BaseService):
         :return: dictionary with status.
         """
         if await self.verify_invite(**body):
-            return {"status": "OK"}
+            return SignUpStatus(status="OK")
         raise HTTPException(
             status_code=400,
             detail="Either token or email is invalid",

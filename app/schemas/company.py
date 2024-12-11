@@ -21,3 +21,9 @@ class CompanyOut(BaseModel):
     model_config = ConfigDict(from_attributes=True)
     id: int
     company_name: str
+
+
+class SignUpStatus(BaseModel):
+    """Schema for responding in sign up checks."""
+
+    status: str

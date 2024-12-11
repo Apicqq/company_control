@@ -69,7 +69,11 @@ class UserService(BaseService):
         """
         Change account for user.
 
-        :return:
+        :param user: request user, for whom account will be changed.
+        :param new_account: new account to which user's account will
+         be changed.
+
+        :return: instance of user.
         """
         if await self.uow.users.check_account_exists(new_account):
             raise HTTPException(

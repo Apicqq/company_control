@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends
 
 from app.schemas.auth import InviteChallenge
-from app.schemas.company import CreateCompany, CompanyOut
+from app.schemas.company import CreateCompany, CompanyOut, SignUpStatus
 from app.services.company import CompanyService
 
 router = APIRouter(
@@ -20,11 +20,11 @@ async def check_account(
     return await service.check_account(account)
 
 
-@router.post("/sign-up", response_model=dict[str, str])
+@router.post("/sign-up", response_model=SignUpStatus)
 async def sign_up(
     body: InviteChallenge,
     service: CompanyService = Depends(CompanyService),
-):
+) -> SignUpStatus:
     return await service.sign_up(body.model_dump())
 
 

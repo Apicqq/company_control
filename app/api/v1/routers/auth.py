@@ -14,7 +14,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/jwt/login")
 async def validate_auth_user(
     user_data: Annotated[UserLoginForm, Form()],
     service: AuthService = Depends(AuthService),
-):
+) -> UserOut:
     return await service.validate_auth_user(**user_data.model_dump())
 
 
@@ -36,5 +36,5 @@ async def get_current_auth_user(
 async def issue_jwt(
     user: UserIn = Depends(validate_auth_user),
     service: AuthService = Depends(AuthService),
-):
+) -> AccessToken:
     return await service.issue_jwt(user)
