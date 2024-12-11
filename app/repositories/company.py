@@ -4,7 +4,6 @@ from sqlalchemy import select, exists, insert
 
 from app.repositories.base import SqlAlchemyRepository
 from app.models.base import Base
-from app.models.user import User
 from app.models.auth import InviteChallenge
 from app.utils.auth import generate_invite_code
 
@@ -22,16 +21,6 @@ class CompanyRepository(SqlAlchemyRepository):
     as well as specific ones listed below.
     """
 
-    async def check_email_exists(self, email: str) -> bool:
-        """
-        Get User by email, to check if it exists.
-
-        :param email: incoming email.
-        :return: True if such email exists in database, False otherwise.
-        """
-        query: Select = select(exists().where(User.account == email))
-        return await self.session.scalar(query)
-
     async def check_token_exists(self, email: str) -> bool:
         """
         Check if token exists for given email.
@@ -45,17 +34,17 @@ class CompanyRepository(SqlAlchemyRepository):
         )
         return await self.session.scalar(query)
 
-    async def generate_invite_code(self, email: str) -> InviteChallenge:
+    async def generate_invite_code(self, account: str) -> InviteChallenge:
         """
         Generate invitation code for given email.
 
-        :param email: email of the user.
+        :param account: email of the user.
         :return: object of InviteChallenge model.
         """
         query: Insert = (
             insert(InviteChallenge)
             .values(
-                account=email,
+                account=account,
                 invite_token=generate_invite_code(),
             )
             .returning(InviteChallenge)
@@ -63,17 +52,17 @@ class CompanyRepository(SqlAlchemyRepository):
         obj: Result = await self.session.execute(query)
         return obj.scalar_one()
 
-    async def verify_invite(self, email: str, invite_token: str) -> bool:
+    async def verify_invite(self, account: str, invite_token: str) -> bool:
         """
         Verify given data, proceed if valid.
 
-        :param email: email of the user.
+        :param account: email of the user.
         :param invite_token: invite token of the user.
         :return: True if valid, False otherwise.
         """
         query: Select = select(
             exists()
-            .where(InviteChallenge.account == email)
+            .where(InviteChallenge.account == account)
             .where(InviteChallenge.invite_token == invite_token),
         )
         return await self.session.scalar(query)

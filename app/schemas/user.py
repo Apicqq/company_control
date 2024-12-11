@@ -11,6 +11,7 @@ class UserOut(BaseModel):
     """
 
     model_config = ConfigDict(from_attributes=True)
+    id: int
     first_name: str
     last_name: str
     account: EmailStr
@@ -24,7 +25,6 @@ class UserIn(UserOut):
     Used in JWT authentication.
     """
 
-    id: int
     password: str | bytes
 
 
@@ -38,3 +38,24 @@ class UserLoginForm(BaseModel):
 
     account: EmailStr = Field(..., validation_alias="username")
     password: str
+
+
+class EmployeeAccount(BaseModel):
+    """
+    Schema for new User account, also known as employee.
+
+    This schema is only used when admin of a company generates
+    invite for new employee.
+    """
+    account: EmailStr
+
+
+class UserCredentials(BaseModel):
+    """
+    Schema for new User account.
+
+    Used for changing user's credentials, such as first name or last name.
+    """
+
+    first_name: str
+    last_name: str

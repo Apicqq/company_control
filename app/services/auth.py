@@ -3,11 +3,10 @@ from http import HTTPStatus
 from fastapi.exceptions import HTTPException
 
 from app.models.user import User
-from app.services.base import BaseService
+from app.services.base import BaseService, atomic
 from app.schemas.auth import AccessToken
 from app.schemas.user import UserOut
 from app.utils.auth import verify_password
-from app.units_of_work.base import atomic
 
 
 class AuthService(BaseService):

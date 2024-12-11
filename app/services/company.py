@@ -6,8 +6,8 @@ from email_validator import validate_email, EmailNotValidError
 
 from app.models.auth import InviteChallenge
 from app.schemas.company import CompanyOut
-from app.services.base import BaseService
-from app.units_of_work.base import atomic
+from app.services.base import BaseService, atomic
+# from app.units_of_work.base import atomic
 
 if TYPE_CHECKING:
     from app.models.company import Company
@@ -23,14 +23,14 @@ class CompanyService(BaseService):
     base_repository: str = "companies"
 
     @atomic
-    async def get_company_by_email(self, account: str) -> bool:
+    async def check_email_exists(self, account: str) -> bool:
         """
-        Get company by email, to check if it exists.
+        Check whether email exists in database.
 
         :param account: email of the company.
-        :return bool: True if company exists, else False.
+        :return bool: True if email exists in database, else False.
         """
-        return await self.uow.companies.check_email_exists(account)
+        return await self.uow.users.check_account_exists(account)
 
     @atomic
     async def generate_invite_token(self, account: str) -> InviteChallenge:
@@ -55,7 +55,7 @@ class CompanyService(BaseService):
     @atomic
     async def verify_invite(self, account: str, invite_token: str) -> bool:
         """
-        Sign up company with given email and invite token.
+        Verify if token-email pair is valid.
 
         :param account: incoming email.
         :param invite_token: incoming invite token.
@@ -92,7 +92,7 @@ class CompanyService(BaseService):
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail="Email is not valid",
             )
-        if await self.get_company_by_email(account):
+        if await self.check_email_exists(account):
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail="Email already taken",
@@ -107,7 +107,7 @@ class CompanyService(BaseService):
     @atomic
     async def sign_up(self, body: dict[str, str]) -> dict[str, str]:
         """
-        Sing up company with given email and invite token.
+        Sign up company with given email and invite token.
 
         :param body: email and invite token.
         :return: dictionary with status.
