@@ -11,11 +11,15 @@ if TYPE_CHECKING:
 
 
 class Role(Enum):
+    """Enum, which represents available user roles in company."""
+
     USER = "user"
     ADMIN = "admin"
 
 
 class User(Base):
+    """Database model for user."""
+
     first_name: Mapped[str] = mapped_column(String)
     last_name: Mapped[str] = mapped_column(String)
     account: Mapped[str] = mapped_column(String, unique=True)

@@ -8,6 +8,8 @@ BASE_DIR = Path(__file__).parent.parent.parent
 
 
 class AuthJWT(BaseModel):
+    """Config for JWT authentication."""
+
     private_key_path: Path = BASE_DIR / "certs" / "jwt-private.pem"
     public_key_path: Path = BASE_DIR / "certs" / "jwt-public.pem"
     algorithm: str = "RS256"

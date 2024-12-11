@@ -5,5 +5,7 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 
 class InviteChallenge(Base):
+    """Database model for invite challenge."""
+
     account: Mapped[str] = mapped_column(String)
     invite_token: Mapped[str] = mapped_column(String)

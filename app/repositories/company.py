@@ -25,7 +25,7 @@ class CompanyRepository(SqlAlchemyRepository):
     async def check_email_exists(self, email: str) -> bool:
         """
         Get User by email, to check if it exists.
-        :return:
+        :return: True if such email exists in database, False otherwise.
         """
         query: Select = select(exists().where(User.email == email))
         return await self.session.scalar(query)
@@ -33,7 +33,8 @@ class CompanyRepository(SqlAlchemyRepository):
     async def check_token_exists(self, email: str) -> bool:
         """
         Check if token exists for given email.
-        :return:
+        :return: True if such pair of token and email exists in database,
+         False otherwise.
         """
         query: Select = select(
             exists().where(InviteChallenge.account == email)
@@ -43,8 +44,8 @@ class CompanyRepository(SqlAlchemyRepository):
     async def generate_invite_code(self, email: str) -> type[Model]:
         """
         Generate invitation code for given email.
-        :param email: email of the company.
-        :return:
+        :param email: email of the user.
+        :return: object of InviteChallenge model.
         """
         query: Insert = insert(InviteChallenge).values(
             account=email,
@@ -53,12 +54,12 @@ class CompanyRepository(SqlAlchemyRepository):
         obj: Result = await self.session.execute(query)
         return obj.scalar_one()
 
-    async def verify_invite(self, email: str, invite_token: str) -> None:
+    async def verify_invite(self, email: str, invite_token: str) -> bool:
         """
         Verify given data, proceed if valid.
-        :param email:
-        :param invite_token:
-        :return:
+        :param email: email of the user.
+        :param invite_token: invite token of the user.
+        :return: True if valid, False otherwise.
         """
         query: Select = select(
             exists().where(InviteChallenge.account == email)
@@ -69,8 +70,8 @@ class CompanyRepository(SqlAlchemyRepository):
     async def create_company(self, **kwargs) -> Model:
         """
         Create a company and return it.
-        :param kwargs:
-        :return:
+        :param kwargs: data to create a company.
+        :return: object of Company model.
         """
         company_data = dict(
             company_name=kwargs.get("company_name"),

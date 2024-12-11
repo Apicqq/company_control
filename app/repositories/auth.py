@@ -26,9 +26,10 @@ class AuthRepository(SqlAlchemyRepository):
     async def issue_jwt(user: User) -> str:
         """
         Issue JWT token for given user.
+        :param user: User, for whom token is issued.
         :return: encoded JWT-token.
         """
-        jwt_payload = {
+        jwt_payload: dict = {
             "first_name": user.first_name,
             "last_name": user.last_name,
             "account": user.account
@@ -37,8 +38,13 @@ class AuthRepository(SqlAlchemyRepository):
 
     @staticmethod
     async def decode_token(token: str) -> dict:
+        """
+        Decode JWT token into string.
+        :param token: incoming token.
+        :return: decoded token.
+        """
         try:
             decoded = decode_jwt(token)
-        except InvalidTokenError:
-            raise RuntimeError
+        except InvalidTokenError as error:
+            raise RuntimeError from error
         return decoded

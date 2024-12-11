@@ -2,6 +2,7 @@ from http import HTTPStatus
 
 from fastapi.exceptions import HTTPException
 
+from app.models.auth import InviteChallenge
 from app.schemas.company import CompanyOut
 from app.services.base import BaseService
 from app.units_of_work.base import atomic
@@ -26,20 +27,20 @@ class CompanyService(BaseService):
         return await self.uow.companies.check_email_exists(account)
 
     @atomic
-    async def generate_invite_token(self, account: str):
+    async def generate_invite_token(self, account: str) -> InviteChallenge:
         """
         Generate invite token for company with given email.
         :param account: email of the company.
-        :return:
+        :return: object of InviteChallenge model.
         """
         return await self.uow.companies.generate_invite_code(account)
 
     @atomic
     async def check_token_exists(self, account: str) -> bool:
         """
-        Check if token exists for given email.
-        :param account:
-        :return:
+        Check if token was already created for given email.
+        :param account: incoming email.
+        :return: True if token exists, False otherwise.
         """
         return await self.uow.companies.check_token_exists(account)
 
@@ -47,9 +48,9 @@ class CompanyService(BaseService):
     async def verify_invite(self, account: str, invite_token: str):
         """
         Sign up company with given email and invite token.
-        :param account: email of the company.
-        :param invite_token: invite token of the company.
-        :return:
+        :param account: incoming email.
+        :param invite_token: incoming invite token.
+        :return: True if token-email pair is valid, False otherwise.
         """
         return await self.uow.companies.verify_invite(account, invite_token)
 
@@ -75,8 +76,8 @@ class CompanyService(BaseService):
 
         if not, but token has already been created, but not used yet,
         raise HTTPException.
-        :param account:
-        :return:
+        :param account: incoming email.
+        :return: object of InviteChallenge model.
         """
         if await self.get_company_by_email(account):
             raise HTTPException(
@@ -91,7 +92,12 @@ class CompanyService(BaseService):
         return await self.generate_invite_token(account)
 
     @atomic
-    async def sign_up(self, body: dict[str, str]):
+    async def sign_up(self, body: dict[str, str]) -> dict[str, str]:
+        """
+        Sing up company with given email and invite token.
+        :param body: email and invite token.
+        :return: dictionary with status.
+        """
         if await self.verify_invite(**body):
             return {"status": "OK"}
         raise HTTPException(

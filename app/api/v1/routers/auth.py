@@ -20,14 +20,6 @@ async def validate_auth_user(
     return await service.validate_auth_user(**user_data.model_dump())
 
 
-@router.post("/login", response_model=AccessToken)
-async def issue_jwt(
-        user: UserIn = Depends(validate_auth_user),
-        service: AuthService = Depends(AuthService)
-):
-    return await service.issue_jwt(user)
-
-
 async def get_current_token_payload(
         token: str = Depends(oauth2_scheme),
         service: AuthService = Depends(AuthService),
@@ -40,3 +32,11 @@ async def get_current_auth_user(
         service: AuthService = Depends(AuthService),
 ) -> UserOut:
     return await service.get_current_auth_user(payload)
+
+
+@router.post("/login", response_model=AccessToken)
+async def issue_jwt(
+        user: UserIn = Depends(validate_auth_user),
+        service: AuthService = Depends(AuthService)
+):
+    return await service.issue_jwt(user)

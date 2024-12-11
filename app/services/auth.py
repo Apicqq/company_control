@@ -21,12 +21,13 @@ class AuthService(BaseService):
     base_repository: str = "auth"
 
     @atomic
-    async def validate_auth_user(self, account: str, password: str):
+    async def validate_auth_user(self, account: str, password: str) -> User:
         """
         Validate incoming pair of credentials, check if they are correct.
-        :param account:
-        :param password:
-        :return:
+        :param account: email of the user.
+        :param password: password of the user.
+        :return: User object if credentials are valid.
+        :raises HTTPException: if credentials are invalid.
         """
         invalid_user_exception = HTTPException(
             status_code=HTTPStatus.FORBIDDEN,
@@ -42,7 +43,7 @@ class AuthService(BaseService):
         return user
 
     @atomic
-    async def issue_jwt(self, user: User):
+    async def issue_jwt(self, user: User) -> AccessToken:
         """
         Issue JWT token for given user.
         :param user: User, for whom token is issued.
@@ -52,7 +53,12 @@ class AuthService(BaseService):
         return AccessToken(access_token=token)
 
     @atomic
-    async def decode_token(self, token: str) -> str:
+    async def decode_token(self, token: str) -> dict:
+        """
+        Decode JWT token into string.
+        :param token: incoming token.
+        :return: decoded token in dictionary format.
+        """
         try:
             payload = await self.uow.auth.decode_token(token)
         except RuntimeError:
@@ -67,6 +73,11 @@ class AuthService(BaseService):
             self,
             payload: dict
     ) -> UserOut:
+        """
+        Try to get current user from token.
+        :param payload: token payload.
+        :return: current user.
+        """
         user_account: str | None = payload.get("account")
         if not (
                 user := await self.uow.auth.get_by_query_one_or_none(
