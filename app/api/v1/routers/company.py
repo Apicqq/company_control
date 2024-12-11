@@ -39,15 +39,3 @@ async def complete_sign_up(
         user_service: UserService = Depends(UserService),
 ) -> CompanyOut:
     return await company_service.create_company(**body.model_dump())
-
-
-@router.post(
-    "/sign-up-complete",
-    response_model=CompanyOut,
-)
-async def complete_sign_up(
-        body: CreateCompany,
-        company_service: CompanyService = Depends(CompanyService),
-        user_service: UserService = Depends(UserService),
-) -> CompanyOut:
-    return await company_service.create_company(**body.model_dump())
