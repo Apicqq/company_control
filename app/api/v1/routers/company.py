@@ -3,7 +3,6 @@ from fastapi import APIRouter, Depends
 from app.schemas.auth import InviteChallenge
 from app.schemas.company import CreateCompany, CompanyOut
 from app.services.company import CompanyService
-from app.services.user import UserService
 
 router = APIRouter(
     prefix="/auth",
@@ -36,6 +35,5 @@ async def sign_up(
 async def complete_sign_up(
     body: CreateCompany,
     company_service: CompanyService = Depends(CompanyService),
-    user_service: UserService = Depends(UserService),
 ) -> CompanyOut:
     return await company_service.create_company(**body.model_dump())
