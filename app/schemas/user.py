@@ -47,6 +47,7 @@ class EmployeeAccount(BaseModel):
     This schema is only used when admin of a company generates
     invite for new employee.
     """
+
     account: EmailStr
 
 

@@ -19,7 +19,8 @@ class UserService(BaseService):
 
     @atomic
     async def check_user_is_admin_in_org(
-            self, user: User
+        self,
+        user: User,
     ) -> bool:
         """
         Check if user is admin in organization.
@@ -31,23 +32,32 @@ class UserService(BaseService):
 
     @atomic
     async def generate_invite_for_new_employee(
-            self, user: User, new_employee_account: str
+        self,
+        user: User,
+        new_employee_account: str,
     ) -> InviteChallenge:
+        """
+        Generate invite for new employee.
+
+        :param user: user which is generating invite.
+        :param new_employee_account: account for generating invite.
+        :return: an instance of InviteChallenge.
+        """
         if await self.uow.companies.check_token_exists(new_employee_account):
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail="Cannot generate invite for given email,"
-                       " as invite token for that email already exists",
+                " as invite token for that email already exists",
             )
         if await self.uow.users.check_account_exists(new_employee_account):
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail="Cannot generate invite for given email,"
-                       " as it's already taken, please choose another one",
+                " as it's already taken, please choose another one",
             )
         if await self.check_user_is_admin_in_org(user):
             return await self.uow.companies.generate_invite_code(
-                new_employee_account
+                new_employee_account,
             )
         raise HTTPException(
             status_code=HTTPStatus.FORBIDDEN,
@@ -70,7 +80,9 @@ class UserService(BaseService):
 
     @atomic
     async def change_credentials(
-            self, user: User, new_credentials: dict
+        self,
+        user: User,
+        new_credentials: dict,
     ) -> UserOut:
         """
         Change name or surname for user.

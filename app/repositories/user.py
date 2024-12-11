@@ -59,7 +59,7 @@ class UserRepository(SqlAlchemyRepository):
         :return: True if user is admin, False otherwise.
         """
         query: Select = select(
-            exists().where(User.id == user.id).where(User.role == Role.ADMIN)
+            exists().where(User.id == user.id).where(User.role == Role.ADMIN),
         )
         return await self.session.scalar(query)
 
