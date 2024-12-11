@@ -81,6 +81,7 @@ class AuthService(BaseService):
         user_account: str | None = payload.get("account")
         if not (
                 user := await self.uow.auth.get_by_query_one_or_none(
+                    # type: ignore[func-returns-value]
                     account=user_account
                 )
         ):

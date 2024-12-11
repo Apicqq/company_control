@@ -41,7 +41,7 @@ class CompanyRepository(SqlAlchemyRepository):
         )
         return await self.session.scalar(query)
 
-    async def generate_invite_code(self, email: str) -> type[Model]:
+    async def generate_invite_code(self, email: str) -> InviteChallenge:
         """
         Generate invitation code for given email.
         :param email: email of the user.

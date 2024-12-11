@@ -21,11 +21,15 @@ class UserRepository(SqlAlchemyRepository):
         :param kwargs: data to create user.
         :return: created user.
         """
+        password: str | None = kwargs.get("password")
+        if password is None:
+            raise ValueError("Password is required")
+
         user_data: dict = dict(
             first_name=kwargs.get("first_name"),
             last_name=kwargs.get("last_name"),
             account=kwargs.get("account"),
-            password=hash_password(kwargs.get("password")).decode("utf-8"),
+            password=hash_password(password).decode("utf-8"),
             company_id=kwargs.get("company_id"),
         )
         return await self.add_one_and_get_obj(**user_data)

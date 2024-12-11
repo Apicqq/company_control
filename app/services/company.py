@@ -1,8 +1,11 @@
 from http import HTTPStatus
+from typing import TypeVar
 
 from fastapi.exceptions import HTTPException
 
+from app.models.base import Base
 from app.models.auth import InviteChallenge
+from app.models.company import Company
 from app.schemas.company import CompanyOut
 from app.services.base import BaseService
 from app.units_of_work.base import atomic
@@ -45,7 +48,7 @@ class CompanyService(BaseService):
         return await self.uow.companies.check_token_exists(account)
 
     @atomic
-    async def verify_invite(self, account: str, invite_token: str):
+    async def verify_invite(self, account: str, invite_token: str) -> bool:
         """
         Sign up company with given email and invite token.
         :param account: incoming email.
@@ -55,14 +58,14 @@ class CompanyService(BaseService):
         return await self.uow.companies.verify_invite(account, invite_token)
 
     @atomic
-    async def create_company(self, **kwargs):
+    async def create_company(self, **kwargs) -> CompanyOut:
         #TODO add uniqueness validation before executing queries
         """
         Create new company.
         :param kwargs:
         :return:
         """
-        company = await self.uow.companies.create_company(**kwargs)
+        company: Company = await self.uow.companies.create_company(**kwargs)
         await self.uow.users.create_user(
             company_id=company.id,
             **kwargs
@@ -70,7 +73,7 @@ class CompanyService(BaseService):
         return CompanyOut.model_validate(company)
 
     @atomic
-    async def check_account(self, account: str):
+    async def check_account(self, account: str) -> InviteChallenge:
         """
         Check if company with given email already exists.
 
