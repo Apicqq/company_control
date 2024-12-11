@@ -2,6 +2,7 @@ from http import HTTPStatus
 from typing import TYPE_CHECKING
 
 from fastapi.exceptions import HTTPException
+from email_validator import validate_email, EmailNotValidError
 
 from app.models.auth import InviteChallenge
 from app.schemas.company import CompanyOut
@@ -64,7 +65,6 @@ class CompanyService(BaseService):
 
     @atomic
     async def create_company(self, **kwargs) -> CompanyOut:
-        # TODO add uniqueness validation before executing queries
         """
         Create new company.
 
@@ -85,6 +85,13 @@ class CompanyService(BaseService):
         :param account: incoming email.
         :return: object of InviteChallenge model.
         """
+        try:
+            validate_email(account)
+        except EmailNotValidError:
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail="Email is not valid",
+            )
         if await self.get_company_by_email(account):
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,

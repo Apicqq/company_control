@@ -29,7 +29,7 @@ class CompanyRepository(SqlAlchemyRepository):
         :param email: incoming email.
         :return: True if such email exists in database, False otherwise.
         """
-        query: Select = select(exists().where(User.email == email))
+        query: Select = select(exists().where(User.account == email))
         return await self.session.scalar(query)
 
     async def check_token_exists(self, email: str) -> bool:
