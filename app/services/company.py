@@ -23,7 +23,7 @@ class CompanyService(BaseService):
         :param account: email of the company.
         :return bool: True if company exists, else False.
         """
-        return await self.uow.companies.get_company_by_email(account)
+        return await self.uow.companies.check_email_exists(account)
 
     @atomic
     async def generate_invite_token(self, account: str):
@@ -55,12 +55,13 @@ class CompanyService(BaseService):
 
     @atomic
     async def create_company(self, **kwargs):
+        #TODO add uniqueness validation before executing queries
         """
         Create new company.
         :param kwargs:
         :return:
         """
-        company =  await self.uow.companies.create_company(**kwargs)
+        company = await self.uow.companies.create_company(**kwargs)
         await self.uow.users.create_user(
             company_id=company.id,
             **kwargs

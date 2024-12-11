@@ -22,9 +22,9 @@ class CompanyRepository(SqlAlchemyRepository):
     as well as specific ones listed below.
     """
 
-    async def get_company_by_email(self, email: str) -> bool:
+    async def check_email_exists(self, email: str) -> bool:
         """
-        Get company by email, to check if it exists.
+        Get User by email, to check if it exists.
         :return:
         """
         query: Select = select(exists().where(User.email == email))
