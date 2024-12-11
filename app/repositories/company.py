@@ -25,6 +25,8 @@ class CompanyRepository(SqlAlchemyRepository):
     async def check_email_exists(self, email: str) -> bool:
         """
         Get User by email, to check if it exists.
+
+        :param email: incoming email.
         :return: True if such email exists in database, False otherwise.
         """
         query: Select = select(exists().where(User.email == email))
@@ -33,17 +35,20 @@ class CompanyRepository(SqlAlchemyRepository):
     async def check_token_exists(self, email: str) -> bool:
         """
         Check if token exists for given email.
+
+        :param email: incoming email.
         :return: True if such pair of token and email exists in database,
          False otherwise.
         """
         query: Select = select(
-            exists().where(InviteChallenge.account == email)
+            exists().where(InviteChallenge.account == email),
         )
         return await self.session.scalar(query)
 
     async def generate_invite_code(self, email: str) -> InviteChallenge:
         """
         Generate invitation code for given email.
+
         :param email: email of the user.
         :return: object of InviteChallenge model.
         """
@@ -61,6 +66,7 @@ class CompanyRepository(SqlAlchemyRepository):
     async def verify_invite(self, email: str, invite_token: str) -> bool:
         """
         Verify given data, proceed if valid.
+
         :param email: email of the user.
         :param invite_token: invite token of the user.
         :return: True if valid, False otherwise.
@@ -68,13 +74,14 @@ class CompanyRepository(SqlAlchemyRepository):
         query: Select = select(
             exists()
             .where(InviteChallenge.account == email)
-            .where(InviteChallenge.invite_token == invite_token)
+            .where(InviteChallenge.invite_token == invite_token),
         )
         return await self.session.scalar(query)
 
     async def create_company(self, **kwargs) -> Model:
         """
         Create a company and return it.
+
         :param kwargs: data to create a company.
         :return: object of Company model.
         """

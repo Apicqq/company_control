@@ -1,6 +1,5 @@
-from typing import TYPE_CHECKING, TypeVar
+from typing import TypeVar
 
-from sqlalchemy import select, exists, insert
 from jwt import InvalidTokenError
 
 from app.repositories.base import SqlAlchemyRepository
@@ -8,8 +7,6 @@ from app.models.base import Base
 from app.models.user import User
 from app.utils.auth import encode_jwt, decode_jwt
 
-if TYPE_CHECKING:
-    from sqlalchemy import Select, Insert, Result
 
 Model = TypeVar("Model", bound=Base)
 
@@ -26,6 +23,7 @@ class AuthRepository(SqlAlchemyRepository):
     async def issue_jwt(user: User) -> str:
         """
         Issue JWT token for given user.
+
         :param user: User, for whom token is issued.
         :return: encoded JWT-token.
         """
@@ -40,6 +38,7 @@ class AuthRepository(SqlAlchemyRepository):
     async def decode_token(token: str) -> dict:
         """
         Decode JWT token into string.
+
         :param token: incoming token.
         :return: decoded token.
         """

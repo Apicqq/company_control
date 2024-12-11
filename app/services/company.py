@@ -1,14 +1,15 @@
 from http import HTTPStatus
-from typing import TypeVar
+from typing import TYPE_CHECKING
 
 from fastapi.exceptions import HTTPException
 
-from app.models.base import Base
 from app.models.auth import InviteChallenge
-from app.models.company import Company
 from app.schemas.company import CompanyOut
 from app.services.base import BaseService
 from app.units_of_work.base import atomic
+
+if TYPE_CHECKING:
+    from app.models.company import Company
 
 
 class CompanyService(BaseService):
@@ -24,6 +25,7 @@ class CompanyService(BaseService):
     async def get_company_by_email(self, account: str) -> bool:
         """
         Get company by email, to check if it exists.
+
         :param account: email of the company.
         :return bool: True if company exists, else False.
         """
@@ -33,6 +35,7 @@ class CompanyService(BaseService):
     async def generate_invite_token(self, account: str) -> InviteChallenge:
         """
         Generate invite token for company with given email.
+
         :param account: email of the company.
         :return: object of InviteChallenge model.
         """
@@ -42,6 +45,7 @@ class CompanyService(BaseService):
     async def check_token_exists(self, account: str) -> bool:
         """
         Check if token was already created for given email.
+
         :param account: incoming email.
         :return: True if token exists, False otherwise.
         """
@@ -51,6 +55,7 @@ class CompanyService(BaseService):
     async def verify_invite(self, account: str, invite_token: str) -> bool:
         """
         Sign up company with given email and invite token.
+
         :param account: incoming email.
         :param invite_token: incoming invite token.
         :return: True if token-email pair is valid, False otherwise.
@@ -62,8 +67,9 @@ class CompanyService(BaseService):
         # TODO add uniqueness validation before executing queries
         """
         Create new company.
-        :param kwargs:
-        :return:
+
+        :param kwargs: data to create a company.
+        :return: created company in CompanyOut schema.
         """
         company: Company = await self.uow.companies.create_company(**kwargs)
         await self.uow.users.create_user(company_id=company.id, **kwargs)
@@ -95,11 +101,13 @@ class CompanyService(BaseService):
     async def sign_up(self, body: dict[str, str]) -> dict[str, str]:
         """
         Sing up company with given email and invite token.
+
         :param body: email and invite token.
         :return: dictionary with status.
         """
         if await self.verify_invite(**body):
             return {"status": "OK"}
         raise HTTPException(
-            status_code=400, detail="Either token or email is invalid"
+            status_code=400,
+            detail="Either token or email is invalid",
         )

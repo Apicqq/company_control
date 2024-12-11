@@ -26,6 +26,7 @@ class User(Base):
     password: Mapped[str] = mapped_column(String)
     role: Mapped[Role] = mapped_column(default=Role.ADMIN)
     company: Mapped["Company"] = relationship(
-        "Company", back_populates="users"
+        "Company",
+        back_populates="users",
     )
     company_id: Mapped[int] = mapped_column(Integer, ForeignKey("company.id"))

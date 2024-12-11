@@ -15,6 +15,7 @@ def encode_jwt(
 ) -> str:
     """
     Encode incoming payload to JWT token.
+
     :param payload: incoming payload, in dictionary format.
     :param private_key: private key to encode token.
     :param algorithm: algorithm to encode token.
@@ -35,6 +36,7 @@ def decode_jwt(
 ) -> dict:
     """
     Decode JWT token into dictionary format.
+
     :param token: encoded JWT token.
     :param public_key: public key to decode token.
     :param algorithm: algorithm to decode token.
@@ -47,6 +49,7 @@ def decode_jwt(
 def hash_password(password: str) -> bytes:
     """
     Hash incoming password.
+
     :param password: plain password to hash.
     :return: hashed password.
     """
@@ -56,6 +59,7 @@ def hash_password(password: str) -> bytes:
 def verify_password(password: str, hashed_password: bytes) -> bool:
     """
     Verify if incoming password is correct to hashed one.
+
     :param password: plain password.
     :param hashed_password: hashed password.
     :return: True if passwords are equal, False otherwise.
@@ -66,6 +70,7 @@ def verify_password(password: str, hashed_password: bytes) -> bool:
 def generate_invite_code(n_bytes: int = 25) -> str:
     """
     Generate random invite code.
+
     :param n_bytes: number of bytes to generate string from.
     :return: randomly generated token string.
     """

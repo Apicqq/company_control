@@ -15,7 +15,8 @@ router = APIRouter(
     response_model=InviteChallenge,
 )
 async def check_account(
-    account: str, service: CompanyService = Depends(CompanyService)
+    account: str,
+    service: CompanyService = Depends(CompanyService),
 ) -> InviteChallenge:
     return await service.check_account(account)
 
