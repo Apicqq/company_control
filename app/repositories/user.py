@@ -72,8 +72,9 @@ class UserRepository(SqlAlchemyRepository):
          be changed.
         :return: an instance of User.
         """
-        return await self.update_one_by_id( # type: ignore
-            user.id, account=new_account,
+        return await self.update_one_by_id(  # type: ignore
+            user.id,
+            account=new_account,
         )
 
     async def change_credentials(self, user: User, **kwargs: Any) -> User:
@@ -86,6 +87,7 @@ class UserRepository(SqlAlchemyRepository):
 
         :return: an instance of User.
         """
-        return await self.update_one_by_id( # type: ignore
-            user.id, **kwargs,
+        return await self.update_one_by_id(  # type: ignore
+            user.id,
+            **kwargs,
         )

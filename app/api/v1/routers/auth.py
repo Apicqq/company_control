@@ -32,6 +32,9 @@ async def get_current_auth_user(
     return await service.get_current_auth_user(payload)
 
 
+login_required = Annotated[get_current_auth_user, Depends()]
+
+
 @router.post("/login", response_model=AccessToken)
 async def issue_jwt(
     user: UserIn = Depends(validate_auth_user),
