@@ -1,6 +1,6 @@
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, Form
+from fastapi import APIRouter, Depends, Form, Security
 from fastapi.security import OAuth2PasswordBearer
 
 from app.schemas.auth import AccessToken
@@ -30,6 +30,9 @@ async def get_current_auth_user(
     service: AuthService = Depends(AuthService),
 ) -> UserOut:
     return await service.get_current_auth_user(payload)
+
+
+auth_required_dep = Annotated[UserIn, Security(get_current_auth_user)]
 
 
 @router.post("/login", response_model=AccessToken)
