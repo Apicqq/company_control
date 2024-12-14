@@ -97,3 +97,13 @@ class UserService(BaseService):
         :return: instance of user.
         """
         return await self.uow.users.change_credentials(user, **new_credentials)
+
+    @atomic
+    async def get_self_info(self, user: User) -> UserOut:
+        """
+        Return information about current user.
+
+        :param user: request user, whose information will be returned.
+        :return: instance of user.
+        """
+        return UserOut.model_validate(user)
