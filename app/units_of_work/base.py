@@ -4,10 +4,11 @@ from types import TracebackType
 
 from app.database.db import AsyncSessionLocal
 from app.models.user import User
-from app.models.company import Company
+from app.models.company import Company, Department
 from app.repositories.auth import AuthRepository
 from app.repositories.user import UserRepository
 from app.repositories.company import CompanyRepository
+from app.repositories.department import DepartmentRepository
 
 
 def atomic(
@@ -77,6 +78,7 @@ class UnitOfWork:
         self.users = UserRepository(self.session, User)
         self.companies = CompanyRepository(self.session, Company)
         self.auth = AuthRepository(self.session, User)
+        self.departments = DepartmentRepository(self.session, Department)
 
     async def __aexit__(
         self,
