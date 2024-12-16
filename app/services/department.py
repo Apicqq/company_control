@@ -22,6 +22,12 @@ class DepartmentService(BaseService):
             cls,
             department: DepartmentOut
     ) -> DepartmentOut:
+        """
+        Validate incoming department data.
+
+        This is a workaround method to pass data through pydantic validation,
+        so that it won't fail to coerce Ltree path field to string.
+        """
         return DepartmentOut.model_validate(
             dict(
                 id=department.id,
@@ -38,7 +44,9 @@ class DepartmentService(BaseService):
     ) -> DepartmentOut:
         """Create new department for specified company."""
         try:
-            department = await self.uow.companies.create_department(department)
+            department = await self.uow.departments.create_department(
+                department
+            )
             return self.validate_incoming_department(department)
         except ParentNotFoundException as exception:
             raise HTTPException(
@@ -51,7 +59,7 @@ class DepartmentService(BaseService):
             self, department_id: int
     ) -> list[DepartmentOut]:
         """Get all sub-departments of a department for specified company."""
-        departments = await self.uow.companies.get_all_sub_departments(
+        departments = await self.uow.departments.get_all_sub_departments(
             department_id
         )
         return [
