@@ -5,12 +5,12 @@ from app.services.department import DepartmentService
 
 
 router = APIRouter(
-    prefix="/department",
+    prefix="/departments",
 )
 
 
 @router.post(
-    "/departments/create",
+    "/create",
     response_model=DepartmentOut
 )
 async def create_department(
@@ -22,7 +22,7 @@ async def create_department(
 
 
 @router.get(
-    "/api/v1/auth/departments/{department_id}",
+    "/{department_id}/sub_departments",
     response_model=list[DepartmentOut]
 )
 async def get_all_sub_departments(
