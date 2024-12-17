@@ -33,7 +33,8 @@ class DepartmentRepository(SqlAlchemyRepository):
         parent_path = None
         if department.parent_department:
             parent = await self.get_by_query_one_or_none(
-                id=department.parent_department)
+                id=department.parent_department
+            ) # type: ignore[func-returns-value]
             if not parent:
                 raise ParentNotFoundException(
                     "Parent department with specified id does not exist."
@@ -52,7 +53,7 @@ class DepartmentRepository(SqlAlchemyRepository):
 
     async def get_all_sub_departments(
             self, department_id: int
-    ) -> Optional[Sequence[Department]]:
+    ) -> Sequence[Department]:
         """
         Fetch all sub-departments of a given department by its ID.
 
@@ -60,7 +61,9 @@ class DepartmentRepository(SqlAlchemyRepository):
         :return: List of sub-departments.
         """
 
-        department = await self.get_by_query_one_or_none(id=department_id)
+        department = await self.get_by_query_one_or_none(
+            id=department_id
+        ) # type: ignore[func-returns-value]
         if department:
             query: Select = select(Department).where(
                 Department.path.descendant_of(department.path),

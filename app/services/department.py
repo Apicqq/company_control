@@ -2,7 +2,8 @@ from http import HTTPStatus
 
 from fastapi.exceptions import HTTPException
 
-from app.schemas.department import DepartmentIn, DepartmentOut
+from app.models.company import Department
+from app.schemas.department import DepartmentOut
 from app.services.base import BaseService, atomic
 from app.utils.exceptions import ParentNotFoundException
 
@@ -40,7 +41,7 @@ class DepartmentService(BaseService):
 
     @atomic
     async def create_department(
-            self, department: DepartmentIn
+            self, department: Department
     ) -> DepartmentOut:
         """Create new department for specified company."""
         try:
