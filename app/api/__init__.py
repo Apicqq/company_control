@@ -20,7 +20,9 @@ router.include_router(company.router, prefix="/v1", tags=["auth | v1"])
 
 router.include_router(auth.router, prefix="/v1", tags=["auth | v1"])
 router.include_router(
-    department.router, prefix="/v1", tags=["departments | v1"]
+    department.router,
+    prefix="/v1",
+    tags=["departments | v1"],
 )
 router.include_router(position.router, prefix="/v1", tags=["positions | v1"])
 
