@@ -31,4 +31,3 @@ class User(Base):
     )
     company_id: Mapped[int] = mapped_column(Integer, ForeignKey("company.id"))
     user_positions = relationship("UserPosition", back_populates="user")
-

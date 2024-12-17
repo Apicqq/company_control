@@ -35,10 +35,16 @@ class Department(Base):
     name: Mapped[str] = mapped_column(String, nullable=False)
     path: Mapped[Ltree] = mapped_column(LtreeType)
     parent_department: Mapped[int] = mapped_column(
-        Integer, ForeignKey("department.id"),
+        Integer,
+        ForeignKey("department.id"),
         nullable=True,
     )
     company_id: Mapped[int] = mapped_column(Integer, ForeignKey("company.id"))
+    head_id: Mapped[int] = mapped_column(
+        Integer,
+        ForeignKey("user.id"),
+        nullable=True,
+    )
 
     parent: Mapped["Department"] = relationship(
         "Department",
@@ -54,7 +60,8 @@ class Department(Base):
         back_populates="department",
     )
     company: Mapped[Company] = relationship(
-        "Company", back_populates="departments"
+        "Company",
+        back_populates="departments",
     )
 
 
@@ -63,20 +70,25 @@ class Position(Base):
 
     __table_args__ = (
         UniqueConstraint(
-            "department_id", "title", name="unique_position_title"
+            "department_id",
+            "title",
+            name="unique_position_title",
         ),
     )
 
     title: Mapped[str] = mapped_column(String, nullable=False)
     department_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("department.id")
+        Integer,
+        ForeignKey("department.id"),
     )
 
     department: Mapped["Department"] = relationship(
-        "Department", back_populates="positions"
+        "Department",
+        back_populates="positions",
     )
     employees: Mapped[list["User"]] = relationship(
-        "UserPosition", back_populates="position"
+        "UserPosition",
+        back_populates="position",
     )
 
 
@@ -84,13 +96,15 @@ class UserPosition(Base):
     """Mapping table for employees and their positions."""
 
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"))
-    position_id: Mapped[int] = mapped_column(Integer,
-                                             ForeignKey("position.id"))
-    is_head_of_department: Mapped[bool] = mapped_column(default=False)
+    position_id: Mapped[int] = mapped_column(
+        Integer, ForeignKey("position.id")
+    )
 
     user: Mapped["User"] = relationship(
-        "User", back_populates="user_positions"
+        "User",
+        back_populates="user_positions",
     )
     position: Mapped["Position"] = relationship(
-        "Position", back_populates="employees"
+        "Position",
+        back_populates="employees",
     )

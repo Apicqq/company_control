@@ -9,7 +9,9 @@ class InviteChallenge(Base):
 
     __table_args__ = (
         UniqueConstraint(
-            "account", "invite_token", name="invite_token_unique"
+            "account",
+            "invite_token",
+            name="invite_token_unique",
         ),
     )
 

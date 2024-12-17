@@ -5,8 +5,7 @@ from fastapi.exceptions import HTTPException
 from app.models.company import Department
 from app.schemas.department import DepartmentOut
 from app.services.base import BaseService, atomic
-from app.utils.exceptions import ParentNotFoundException
-
+from app.utils.exceptions import ParentNotFoundError
 
 
 class DepartmentService(BaseService):
@@ -20,8 +19,8 @@ class DepartmentService(BaseService):
 
     @classmethod
     def validate_incoming_department(
-            cls,
-            department: DepartmentOut
+        cls,
+        department: DepartmentOut,
     ) -> DepartmentOut:
         """
         Validate incoming department data.
@@ -35,21 +34,22 @@ class DepartmentService(BaseService):
                 path=str(department.path),
                 name=department.name,
                 parent_department=department.parent_department,
-                company_id=department.company_id
-            )
+                company_id=department.company_id,
+            ),
         )
 
     @atomic
     async def create_department(
-            self, department: Department
+        self,
+        department: Department,
     ) -> DepartmentOut:
         """Create new department for specified company."""
         try:
             department = await self.uow.departments.create_department(
-                department
+                department,
             )
             return self.validate_incoming_department(department)
-        except ParentNotFoundException as exception:
+        except ParentNotFoundError as exception:
             raise HTTPException(
                 status_code=HTTPStatus.BAD_REQUEST,
                 detail=str(exception),
@@ -57,11 +57,12 @@ class DepartmentService(BaseService):
 
     @atomic
     async def get_all_sub_departments(
-            self, department_id: int
+        self,
+        department_id: int,
     ) -> list[DepartmentOut]:
         """Get all sub-departments of a department for specified company."""
         departments = await self.uow.departments.get_all_sub_departments(
-            department_id
+            department_id,
         )
         return [
             self.validate_incoming_department(department)

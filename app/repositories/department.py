@@ -1,5 +1,5 @@
 from collections.abc import Sequence
-from typing import TYPE_CHECKING, TypeVar, Optional
+from typing import TYPE_CHECKING, TypeVar
 
 from sqlalchemy import select
 from sqlalchemy_utils import Ltree
@@ -7,7 +7,7 @@ from sqlalchemy_utils import Ltree
 from app.models.company import Department
 from app.repositories.base import SqlAlchemyRepository
 from app.models.base import Base
-from app.utils.exceptions import ParentNotFoundException
+from app.utils.exceptions import ParentNotFoundError
 
 if TYPE_CHECKING:
     from sqlalchemy import Select
@@ -33,16 +33,17 @@ class DepartmentRepository(SqlAlchemyRepository):
         parent_path = None
         if department.parent_department:
             parent = await self.get_by_query_one_or_none(
-                id=department.parent_department
-            ) # type: ignore[func-returns-value]
+                id=department.parent_department,
+            )  # type: ignore[func-returns-value]
             if not parent:
-                raise ParentNotFoundException(
-                    "Parent department with specified id does not exist."
+                raise ParentNotFoundError(
+                    "Parent department with specified id does not exist.",
                 )
             parent_path = parent.path
         path = (
             f"{parent_path}.{department.name}"
-            if parent_path else department.name
+            if parent_path
+            else department.name
         )
         return await self.add_one_and_get_obj(
             name=department.name,
@@ -52,7 +53,8 @@ class DepartmentRepository(SqlAlchemyRepository):
         )
 
     async def get_all_sub_departments(
-            self, department_id: int
+        self,
+        department_id: int,
     ) -> Sequence[Department]:
         """
         Fetch all sub-departments of a given department by its ID.
@@ -60,14 +62,13 @@ class DepartmentRepository(SqlAlchemyRepository):
         :param department_id: ID of the department.
         :return: List of sub-departments.
         """
-
         department = await self.get_by_query_one_or_none(
-            id=department_id
-        ) # type: ignore[func-returns-value]
+            id=department_id,
+        )  # type: ignore[func-returns-value]
         if department:
             query: Select = select(Department).where(
                 Department.path.descendant_of(department.path),
-                Department.id != department.id
+                Department.id != department.id,
             )
             result = await self.session.scalars(query)
             return result.all()
