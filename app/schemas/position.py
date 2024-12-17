@@ -17,6 +17,7 @@ class PositionOut(PositionIn):
 
     model_config = ConfigDict(from_attributes=True)
     id: int
+    is_head_of_department: bool
 
 
 class UserPosition(BaseModel):

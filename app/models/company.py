@@ -75,6 +75,7 @@ class UserPosition(Base):
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"))
     position_id: Mapped[int] = mapped_column(Integer,
                                              ForeignKey("position.id"))
+    is_head_of_department: Mapped[bool] = mapped_column(default=False)
 
     user: Mapped["User"] = relationship(
         "User", back_populates="user_positions"
