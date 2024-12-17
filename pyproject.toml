@@ -20,6 +20,7 @@ alembic = "^1.14.0"
 python-multipart = "^0.0.19"
 ruff = "^0.8.2"
 sqlalchemy-utils = "^0.41.2"
+types-sqlalchemy-utils = "^1.1.0"
 
 
 [tool.poetry.group.dev.dependencies]
