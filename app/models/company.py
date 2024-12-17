@@ -1,6 +1,6 @@
 from typing import TYPE_CHECKING
 
-from sqlalchemy import Integer, ForeignKey, String
+from sqlalchemy import Integer, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy_utils import Ltree, LtreeType
 
@@ -26,6 +26,11 @@ class Company(Base):
 
 class Department(Base):
     """Database model for departments with nested structure using ltree."""
+
+    __table_args__ = (
+        UniqueConstraint("company_id", "path", name="unique_path"),
+        UniqueConstraint("company_id", "name", name="unique_department_name"),
+    )
 
     name: Mapped[str] = mapped_column(String, nullable=False)
     path: Mapped[Ltree] = mapped_column(LtreeType)
@@ -55,6 +60,12 @@ class Department(Base):
 
 class Position(Base):
     """Database model for job positions."""
+
+    __table_args__ = (
+        UniqueConstraint(
+            "department_id", "title", name="unique_position_title"
+        ),
+    )
 
     title: Mapped[str] = mapped_column(String, nullable=False)
     department_id: Mapped[int] = mapped_column(
