@@ -3,6 +3,7 @@ from typing import TYPE_CHECKING, TypeVar
 
 from sqlalchemy import select, update, func, cast, exists
 from sqlalchemy_utils import Ltree, LtreeType
+
 from app.models.company import Department
 from app.repositories.base import SqlAlchemyRepository
 from app.models.base import Base
@@ -26,6 +27,7 @@ class DepartmentRepository(SqlAlchemyRepository):
     async def generate_department_path(self, department: Department) -> Ltree:
         """Generate Ltree path for new department."""
         parent_path = None
+        department_name = department.name.replace(" ", "_")
         if department.parent_department:
             parent = await self.get_by_query_one_or_none(
                 id=department.parent_department,
@@ -36,9 +38,9 @@ class DepartmentRepository(SqlAlchemyRepository):
                 )
             parent_path = parent.path
         path = (
-            f"{parent_path}.{department.name.replace(" ", "_")}"
+            f"{parent_path}.{department_name}"
             if parent_path
-            else department.name
+            else department_name
         )
         return Ltree(path)
 
@@ -135,7 +137,7 @@ class DepartmentRepository(SqlAlchemyRepository):
         department: Department | None = await self.get_by_query_one_or_none(
             id=department_id,
         )
-        old_path: LtreeType = department.path # type: ignore
+        old_path: LtreeType = department.path  # type: ignore
         new_path = None
         if department:
             new_name = kwargs.get("name", department.name)
@@ -146,18 +148,19 @@ class DepartmentRepository(SqlAlchemyRepository):
                 department_id,
                 path=new_path,
                 **kwargs,
-            ) # type: ignore[func-returns-value]
+            )  # type: ignore[func-returns-value]
         else:
             updated = await self.update_one_by_id(
-                department_id, **kwargs,
-            ) # type: ignore[func-returns-value]
+                department_id,
+                **kwargs,
+            )  # type: ignore[func-returns-value]
         await self.update_descendent_paths(old_path, new_path)
-        return updated # type: ignore[return-value]
+        return updated  # type: ignore[return-value]
 
     async def update_descendent_paths(
         self,
-        old_path: LtreeType, # type: ignore[valid-type]
-        new_path: LtreeType, # type: ignore[valid-type]
+        old_path: LtreeType,  # type: ignore[valid-type]
+        new_path: LtreeType,  # type: ignore[valid-type]
     ) -> None:
         """Update Ltree paths for descendant departments."""
         query: Update = (

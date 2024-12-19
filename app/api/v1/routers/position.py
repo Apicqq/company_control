@@ -1,3 +1,5 @@
+from http import HTTPStatus
+
 from fastapi import APIRouter, Depends
 
 from app.schemas.position import (
@@ -8,6 +10,7 @@ from app.schemas.position import (
     PositionUpdate,
 )
 from app.services.position import PositionService
+from app.api.v1.routers.auth import auth_required_dep
 
 router = APIRouter(
     prefix="/positions",
@@ -19,6 +22,7 @@ router = APIRouter(
     response_model=PositionOut,
 )
 async def create_position(
+    current_user: auth_required_dep,
     position: PositionIn,
     service: PositionService = Depends(PositionService),
 ):
@@ -30,6 +34,7 @@ async def create_position(
     response_model=UserPositionOut,
 )
 async def assign_position(
+    current_user: auth_required_dep,
     assignee: UserPositionIn,
     service: PositionService = Depends(PositionService),
 ):
@@ -41,6 +46,7 @@ async def assign_position(
     response_model=PositionOut,
 )
 async def get_position(
+    current_user: auth_required_dep,
     position_id: int,
     service: PositionService = Depends(PositionService),
 ):
@@ -52,6 +58,7 @@ async def get_position(
     response_model=PositionOut,
 )
 async def update_position(
+    current_user: auth_required_dep,
     position_id: int,
     position_data: PositionUpdate,
     service: PositionService = Depends(PositionService),
@@ -61,9 +68,10 @@ async def update_position(
 
 @router.delete(
     "/{position_id}",
-    status_code=204,
+    status_code=HTTPStatus.NO_CONTENT,
 )
 async def delete_position(
+    current_user: auth_required_dep,
     position_id: int,
     service: PositionService = Depends(PositionService),
 ):

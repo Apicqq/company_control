@@ -24,7 +24,7 @@ class DepartmentService(BaseService):
     @classmethod
     def validate_incoming_department(
         cls,
-        department: DepartmentOut,
+        department: Department,
     ) -> DepartmentOut:
         """
         Validate incoming department data.
@@ -78,6 +78,14 @@ class DepartmentService(BaseService):
         department: Department,
     ) -> DepartmentOut:
         """Create new department for specified company."""
+        if await self.get_by_query_one_or_none(
+            name=department.name,
+            company_id=department.company_id,
+        ):
+            raise HTTPException(
+                status_code=HTTPStatus.BAD_REQUEST,
+                detail="Department with such name already exists",
+            )
         try:
             department = await self.uow.departments.create_department(
                 department,
@@ -120,9 +128,9 @@ class DepartmentService(BaseService):
                 detail="Cannot set user as head of department,"
                 "as requested user is not in specified department",
             )
-        updated: DepartmentOut | None = (
-            await self.uow.departments.set_department_head(**head.model_dump())
-        )
+        updated: (
+            Department | None
+        ) = await self.uow.departments.set_department_head(**head.model_dump())
         if updated:
             return self.validate_incoming_department(updated)
         raise HTTPException(
@@ -137,11 +145,11 @@ class DepartmentService(BaseService):
         department_data: DepartmentUpdate,
     ) -> DepartmentOut:
         """Update department data for specified company."""
-        new_department: DepartmentOut = (
+        new_department: Department = (
             await self.uow.departments.update_department(
-            department_id,
-            **department_data.model_dump(exclude_unset=True),
-        )
+                department_id,
+                **department_data.model_dump(exclude_unset=True),
+            )
         )
         return self.validate_incoming_department(new_department)
 
