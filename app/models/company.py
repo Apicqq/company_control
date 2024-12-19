@@ -2,12 +2,11 @@ from typing import TYPE_CHECKING
 
 from sqlalchemy import Integer, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy_utils import Ltree, LtreeType
+from sqlalchemy_utils import Ltree
+from sqlalchemy_utils.types import LtreeType
 
 from app.models.base import Base
-
-if TYPE_CHECKING:
-    from app.models.user import User
+from app.models.user import User
 
 
 class Company(Base):
@@ -62,6 +61,10 @@ class Department(Base):
     company: Mapped[Company] = relationship(
         "Company",
         back_populates="departments",
+    )
+    head: Mapped[User] = relationship(
+        "User",
+        back_populates="department_head",
     )
 
 

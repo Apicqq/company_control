@@ -7,7 +7,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.models.base import Base
 
 if TYPE_CHECKING:
-    from app.models.company import Company
+    from app.models.company import Company, Department
 
 
 class Role(Enum):
@@ -28,6 +28,9 @@ class User(Base):
     company: Mapped["Company"] = relationship(
         "Company",
         back_populates="users",
+    )
+    department_head: Mapped["Department"] = relationship(
+        "Department", back_populates="head"
     )
     company_id: Mapped[int] = mapped_column(Integer, ForeignKey("company.id"))
     user_positions = relationship("UserPosition", back_populates="user")

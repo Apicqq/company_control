@@ -17,3 +17,17 @@ class DepartmentOut(DepartmentIn):
     model_config = ConfigDict(from_attributes=True)
     id: int
     path: str
+    head_id: Optional[int] = None
+
+
+class DepartmentHead(BaseModel):
+    """Schema for setting department head."""
+
+    user_id: int
+    department_id: int
+
+
+class DepartmentUpdate(BaseModel):
+    """Schema for updating department."""
+
+    name: Optional[str] = None
