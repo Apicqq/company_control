@@ -149,7 +149,7 @@ class DepartmentRepository(SqlAlchemyRepository):
             ) # type: ignore[func-returns-value]
         else:
             updated = await self.update_one_by_id(
-                department_id, **kwargs
+                department_id, **kwargs,
             ) # type: ignore[func-returns-value]
         await self.update_descendent_paths(old_path, new_path)
         return updated # type: ignore[return-value]
