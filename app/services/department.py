@@ -120,10 +120,15 @@ class DepartmentService(BaseService):
                 detail="Cannot set user as head of department,"
                 "as requested user is not in specified department",
             )
-        updated: DepartmentOut = (
+        updated: DepartmentOut | None = (
             await self.uow.departments.set_department_head(**head.model_dump())
         )
-        return self.validate_incoming_department(updated)
+        if updated:
+            return self.validate_incoming_department(updated)
+        raise HTTPException(
+            status_code=HTTPStatus.NOT_FOUND,
+            detail="Department not found",
+        )
 
     @atomic
     async def update_department(
@@ -132,9 +137,11 @@ class DepartmentService(BaseService):
         department_data: DepartmentUpdate,
     ) -> DepartmentOut:
         """Update department data for specified company."""
-        new_department = await self.uow.departments.update_department(
+        new_department: DepartmentOut = (
+            await self.uow.departments.update_department(
             department_id,
             **department_data.model_dump(exclude_unset=True),
+        )
         )
         return self.validate_incoming_department(new_department)
 

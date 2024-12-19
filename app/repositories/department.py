@@ -121,20 +121,21 @@ class DepartmentRepository(SqlAlchemyRepository):
         self,
         user_id: int,
         department_id: int,
-    ) -> Model:
+    ) -> Model | None:
         """Set given user as head of department."""
         query = select(Department).where(Department.id == department_id)
         result = await self.session.execute(query)
         department = result.scalar_one_or_none()
         if department:
             return await self.update_one_by_id(department_id, head_id=user_id)
+        return None
 
     async def update_department(self, department_id: int, **kwargs) -> Model:
         """Update specified department with new data."""
         department: Department | None = await self.get_by_query_one_or_none(
             id=department_id,
         )
-        old_path: LtreeType = department.path
+        old_path: LtreeType = department.path # type: ignore
         new_path = None
         if department:
             new_name = kwargs.get("name", department.name)
@@ -145,16 +146,18 @@ class DepartmentRepository(SqlAlchemyRepository):
                 department_id,
                 path=new_path,
                 **kwargs,
-            )
+            ) # type: ignore[func-returns-value]
         else:
-            updated = await self.update_one_by_id(department_id, **kwargs)
+            updated = await self.update_one_by_id(
+                department_id, **kwargs
+            ) # type: ignore[func-returns-value]
         await self.update_descendent_paths(old_path, new_path)
-        return updated
+        return updated # type: ignore[return-value]
 
     async def update_descendent_paths(
         self,
-        old_path: LtreeType,
-        new_path: LtreeType,
+        old_path: LtreeType, # type: ignore[valid-type]
+        new_path: LtreeType, # type: ignore[valid-type]
     ) -> None:
         """Update Ltree paths for descendant departments."""
         query: Update = (
