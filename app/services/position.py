@@ -122,7 +122,8 @@ class PositionService(BaseService):
     ) -> PositionOut | None:
         """Update position data for specified company."""
         return await self.uow.positions.update_position(
-            position_id, **position_data.model_dump(exclude_unset=True)
+            position_id,
+            **position_data.model_dump(exclude_unset=True),
         )
 
     @atomic

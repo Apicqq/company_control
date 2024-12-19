@@ -1,5 +1,3 @@
-from typing import TYPE_CHECKING
-
 from sqlalchemy import Integer, ForeignKey, String, UniqueConstraint
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from sqlalchemy_utils import Ltree
@@ -100,7 +98,8 @@ class UserPosition(Base):
 
     user_id: Mapped[int] = mapped_column(Integer, ForeignKey("user.id"))
     position_id: Mapped[int] = mapped_column(
-        Integer, ForeignKey("position.id")
+        Integer,
+        ForeignKey("position.id"),
     )
 
     user: Mapped["User"] = relationship(

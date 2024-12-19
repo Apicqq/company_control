@@ -10,7 +10,7 @@ from app.models.user import User
 from app.utils.exceptions import ParentNotFoundError
 
 if TYPE_CHECKING:
-    from sqlalchemy import Select, ScalarResult, Result, Update, Text
+    from sqlalchemy import Select, ScalarResult, Result, Update
 
 Model = TypeVar("Model", bound=Base)
 
@@ -24,9 +24,7 @@ class DepartmentRepository(SqlAlchemyRepository):
     """
 
     async def generate_department_path(self, department: Department) -> Ltree:
-        """
-        Generate Ltree path for new department.
-        """
+        """Generate Ltree path for new department."""
         parent_path = None
         if department.parent_department:
             parent = await self.get_by_query_one_or_none(
@@ -60,14 +58,15 @@ class DepartmentRepository(SqlAlchemyRepository):
         )
 
     async def check_department_has_subdepartments(
-            self, department: Department
+        self,
+        department: Department,
     ) -> bool:
         """Check whether department have any descendant departments."""
         query: Select = select(
             exists().where(
                 Department.path.descendant_of(department.path),
-                Department.path != department.path
-            )
+                Department.path != department.path,
+            ),
         )
         return await self.session.scalar(query)
 
@@ -112,14 +111,16 @@ class DepartmentRepository(SqlAlchemyRepository):
     async def check_department_has_head(self, department_id: int) -> bool:
         """Check if requested department has head."""
         query: Select = select(Department.head_id).where(
-            Department.id == department_id
+            Department.id == department_id,
         )
         result: Result = await self.session.execute(query)
         user = result.scalar_one_or_none()
         return user is not None
 
     async def set_department_head(
-        self, user_id: int, department_id: int
+        self,
+        user_id: int,
+        department_id: int,
     ) -> Model:
         """Set given user as head of department."""
         query = select(Department).where(Department.id == department_id)
@@ -141,7 +142,9 @@ class DepartmentRepository(SqlAlchemyRepository):
             new_path = await self.generate_department_path(department)
         if new_path:
             updated = await self.update_one_by_id(
-                department_id, path=new_path, **kwargs
+                department_id,
+                path=new_path,
+                **kwargs,
             )
         else:
             updated = await self.update_one_by_id(department_id, **kwargs)
@@ -149,7 +152,9 @@ class DepartmentRepository(SqlAlchemyRepository):
         return updated
 
     async def update_descendent_paths(
-        self, old_path: LtreeType, new_path: LtreeType
+        self,
+        old_path: LtreeType,
+        new_path: LtreeType,
     ) -> None:
         """Update Ltree paths for descendant departments."""
         query: Update = (
@@ -169,7 +174,7 @@ class DepartmentRepository(SqlAlchemyRepository):
                         ),
                     ),
                     LtreeType,
-                )
+                ),
             )
         )
         await self.session.execute(query)
